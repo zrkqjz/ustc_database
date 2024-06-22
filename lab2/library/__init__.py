@@ -1,9 +1,11 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+from datetime import datetime, timedelta
 import pymysql
 
-app = Flask(__name__, template_folder='templates', static_folder='..\\Anchor-Bootstrap-UI-Kit-master\\assets')
+static_path = '..\\Anchor-Bootstrap-UI-Kit-master\\assets'
+app = Flask(__name__, template_folder='templates', static_folder=static_path)
 
 pymysql.install_as_MySQLdb()
 class Config(object):
@@ -15,6 +17,7 @@ class Config(object):
     app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://%s:%s@127.0.0.1:3306/%s' % (user,password,database)
     app.config['SECRET_KEY'] = 'super-secret-key'
     app.config['SECURITY_PASSWORD_SALT'] = 'salt'
+    app.config['UPLOAD_FOLDER'] = 'Anchor-Bootstrap-UI-Kit-master\\assets\\uploads'
     # 设置sqlalchemy自动更跟踪数据库
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
@@ -31,6 +34,7 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 
 login_manager = LoginManager(app)
+login_manager.init_app(app)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -45,6 +49,10 @@ def inject_user():
     from library.models import User
     user = User.query.first()
     return dict(user=user)
+
+@app.context_processor
+def inject_now():
+    return {'now': datetime.now}
 
 from library import views, errors, commands
 

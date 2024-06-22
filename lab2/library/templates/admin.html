@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1> 用户表 </h1>
+<table class="table">
+    <thead class="thead-dark">
+    <tr>
+        <th scope="col"> ID      </th>
+        <th scope="col"> username	</th>
+        <th scope="col"> Name	</th>
+        <th scope="col"> #	</th>
+    </tr>
+    </thead>
+    {% for user in users %}
+    <tbody>
+    <tr>
+        <td> {{ user.id }} </td>
+        <td> {{ user.username }} </td>
+        <td> {{ user.name }} </td>
+        <td> 
+            <div class="d-flex align-items-center">
+                <a class="btn btn-info btn-round btn-sm" href="{{ url_for('edit_user', user_id=user.id) }}">Edit</a>
+                <form class="inline-form ml-2" method="post" action="{{ url_for('delete_user', user_id=user.id) }}">
+                    <input class="btn btn-info btn-round btn-sm" type="submit" name="delete" value="Delete" onclick="return confirm('Are you sure?')">
+                </form>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<h1> 借书表 </h1>
+<table class="table">
+    <thead class="thead-dark">
+    <tr>
+        <th scope="col"> 书名      </th>
+        <th scope="col"> 借书用户	</th>
+        <th scope="col"> 借书日期	</th>
+        <th scope="col"> 应还日期	</th>
+        <th scope="col"> #	</th>
+    </tr>
+    </thead>
+    {% for borrow in borrows %}
+    <tbody>
+    <tr>
+        <td> {{ borrow.bname }} </td>
+        <td> {{ borrow.name }} </td>
+        <td> {{ borrow.borrow_date }} </td>
+        <td> {{ borrow.return_date }} </td>
+        <td> 
+            <div class="d-flex align-items-center">
+                <a class="btn btn-info btn-round btn-sm" href="{{ url_for('edit_borrow', borrow_id=borrow.id) }}">Edit</a>
+                <form class="inline-form ml-2" method="post" action="{{ url_for('delete_borrow', borrow_id=borrow.id) }}">
+                    <input class="btn btn-info btn-round btn-sm" type="submit" name="delete" value="Delete" onclick="return confirm('Are you sure?')">
+                </form>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<h1> 预约表 </h1>
+<table class="table">
+    <thead class="thead-dark">
+    <tr>
+        <th scope="col"> 书名      </th>
+        <th scope="col"> 预约用户	</th>
+        <th scope="col"> 预约日期	</th>
+        <th scope="col"> 失效日期	</th>
+        <th scope="col"> #	</th>
+    </tr>
+    </thead>
+    {% for reserve in reserves %}
+    <tbody>
+    <tr>
+        <td> {{ reserve.bname }} </td>
+        <td> {{ reserve.name }} </td>
+        <td> {{ reserve.reserve_date }} </td>
+        <td> {{ reserve.expire_date }} </td>
+        <td> 
+            <div class="d-flex align-items-center">
+                <a class="btn btn-info btn-round btn-sm" href="{{ url_for('edit_reserve', reserve_id=reserve.id) }}">Edit</a>
+                <form class="inline-form ml-2" method="post" action="{{ url_for('delete_reserve', reserve_id=reserve.id) }}">
+                    <input class="btn btn-info btn-round btn-sm" type="submit" name="delete" value="Delete" onclick="return confirm('Are you sure?')">
+                </form>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<h1> 逾期表 </h1>
+<table class="table">
+    <thead class="thead-dark">
+    <tr>
+        <th scope="col"> 书名      </th>
+        <th scope="col"> 预约用户	</th>
+        <th scope="col"> 预约日期	</th>
+        <th scope="col"> 失效日期	</th>
+        <th scope="col"> #	</th>
+    </tr>
+    </thead>
+    {% for reserve in reserves %}
+    {% if reserve.expire_date < now() %}
+    <tbody>
+    <tr>
+        <td> {{ reserve.bname }} </td>
+        <td> {{ reserve.name }} </td>
+        <td> {{ reserve.reserve_date }} </td>
+        <td> {{ reserve.expire_date }} </td>
+        <td> 
+            <div class="d-flex align-items-center">
+                <a class="btn btn-info btn-round btn-sm" href="{{ url_for('edit_reserve', reserve_id=reserve.id) }}">Edit</a>
+                <form class="inline-form ml-2" method="post" action="{{ url_for('delete_reserve', reserve_id=reserve.id) }}">
+                    <input class="btn btn-info btn-round btn-sm" type="submit" name="delete" value="Delete" onclick="return confirm('Are you sure?')">
+                </form>
+            </div>
+        </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+    </tbody>
+</table>
+<table class="table">
+    <thead class="thead-dark">
+    <tr>
+        <th scope="col"> 书名      </th>
+        <th scope="col"> 借书用户	</th>
+        <th scope="col"> 借书日期	</th>
+        <th scope="col"> 应还日期	</th>
+        <th scope="col"> #	</th>
+    </tr>
+    </thead>
+    {% for borrow in borrows %}
+    {% if borrow.return_date < now() %}
+    <tbody>
+    <tr>
+        <td> {{ borrow.bname }} </td>
+        <td> {{ borrow.name }} </td>
+        <td> {{ borrow.borrow_date }} </td>
+        <td> {{ borrow.return_date }} </td>
+        <td> 
+            <div class="d-flex align-items-center">
+                <a class="btn btn-info btn-round btn-sm" href="{{ url_for('edit_borrow', borrow_id=borrow.id) }}">Edit</a>
+                <form class="inline-form ml-2" method="post" action="{{ url_for('delete_borrow', borrow_id=borrow.id) }}">
+                    <input class="btn btn-info btn-round btn-sm" type="submit" name="delete" value="Delete" onclick="return confirm('Are you sure?')">
+                </form>
+            </div>
+        </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+    </tbody>
+</table>
+
+<h1> 评分表 </h1>
+<table class="table">
+    <thead class="thead-dark">
+    <tr>
+        <th scope="col"> 书名      </th>
+        <th scope="col"> 评分用户	</th>
+        <th scope="col"> 评分值	</th>
+        <th scope="col"> #	</th>
+    </tr>
+    </thead>
+    {% for rate in rates %}
+    <tbody>
+    <tr>
+        <td> {{ rate.bname }} </td>
+        <td> {{ rate.name }} </td>
+        <td> {{ rate.score }} </td>
+        <td> 
+            <div class="d-flex align-items-center">
+                <a class="btn btn-info btn-round btn-sm" href="{{ url_for('edit_rate', rate_id=rate.id) }}">Edit</a>
+                <form class="inline-form ml-2" method="post" action="{{ url_for('delete_rate', rate_id=rate.id) }}">
+                    <input class="btn btn-info btn-round btn-sm" type="submit" name="delete" value="Delete" onclick="return confirm('Are you sure?')">
+                </form>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<h1> 书籍表 <a class="btn btn-info btn-round btn-sm" href="{{ url_for('addbook') }}">Add</a> </h1>
+<table class="table">
+    <thead class="thead-dark">
+    <tr>
+        <th scope="col"> 书名      </th>
+        <th scope="col"> 作者	</th>
+        <th scope="col"> 总数量	</th>
+        <th scope="col"> 借出数量	</th>
+        <th scope="col"> 预约数量	</th>
+        <th scope="col"> #	</th>
+    </tr>
+    </thead>
+    {% for book in books %}
+    <tbody>
+    <tr>
+        <td> {{ book.bname }} </td>
+        <td> {{ book.author }} </td>
+        <td> {{ book.total_num }} </td>
+        <td> {{ book.borrow_num }} </td>
+        <td> {{ book.reserve_num }} </td>
+        <td> 
+            <div class="d-flex align-items-center">
+                <a class="btn btn-info btn-round btn-sm" href="{{ url_for('edit_book', book_id=book.bid) }}">Edit</a>
+                <form class="inline-form ml-2" method="post" action="{{ url_for('delete_book', book_id=book.bid) }}">
+                    <input class="btn btn-info btn-round btn-sm" type="submit" name="delete" value="Delete" onclick="return confirm('Are you sure?')">
+                </form>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

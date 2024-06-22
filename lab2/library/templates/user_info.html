@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- table -->
+<section class="pt-5 pb-5" data-aos="fade-down">
+    <div class="container">
+        <h1> 个人信息 
+        <a class="btn btn-info btn-round btn-sm ml-2" href="{{ url_for('edit_user', user_id=current_user.id) }}">修改</a>
+        </h1>   
+        <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col"> #      </th>
+                    <th scope="col"> #	</th>
+                    <th scope="col"> #	</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th scope="row"> 1	</th>
+                    <td> ID: </td>
+                    <td> {{ current_user.id }} </td>
+                </tr>
+                <tr>
+                    <th scope="row"> 2	</th>
+                    <td> username: </td>
+                    <td> {{ current_user.username }} </td>
+                </tr>
+                <tr>
+                    <th scope="row"> 3	</th>
+                    <td> name: </td>
+                    <td> {{ current_user.name }} </td>
+                </tr>
+                </tbody>
+        </table>
+    </div>
+</section>
+<!-- END table -->
+
+<!-- Borrow -->
+<section class="pt-5 pb-5" data-aos="fade-down">
+    <div class="container">
+        <h1> 借书表 </h1>
+        <div class="row"> 
+            {% for borrow in borrows %}
+            <div class="col-lg-6"> 
+        <div class="card flex-md-row mb-4 box-shadow h-xl-300">
+                <div class="card-body d-flex flex-column align-items-start">
+                    <h3 class="mb-0">
+                    <a class="text-dark" href="#">{{ borrow.bname }}</a>
+                    </h3>
+                    <p class="card-text mb-auto">
+                        借书时间：{{ borrow.borrow_date }} <br>
+                        应还时间：{{ borrow.return_date }} <br>
+                        {% if borrow.return_date < now() %}
+                        <span class="badge badge-danger">已逾期！</span>
+                        {% endif %}
+                    </p>
+                    <div class="d-flex align-items-center">
+                        <a class="btn btn-info btn-round btn-sm ml-2" href="{{ url_for('return_book', book_id=borrow.bid) }}">Return</a>
+                    </div>
+                    <a class="text-gray" href="https://book.douban.com/subject_search?search_text={{ borrow.bname }}">在豆瓣中搜索</a>
+                </div>
+                <img class="card-img-right flex-auto d-none d-md-block" src="assets/uploads/{{ borrow.bid }}.jpg" onerror="this.onerror=null; this.src='assets/img/demo/blog2.jpg';">
+        </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+<!-- END Borrow -->
+<!-- Reserve -->
+<section class="pt-5 pb-5" data-aos="fade-down">
+    <div class="container">
+        <h1> 预约表 </h1>
+        <div class="row"> 
+            {% for reserve in reserves %}
+            <div class="col-lg-6"> 
+                <div class="card flex-md-row mb-4 box-shadow h-xl-300">
+                        <div class="card-body d-flex flex-column align-items-start">
+                            <h3 class="mb-0">
+                            <a class="text-dark" href="#">{{ reserve.bname }}</a>
+                            </h3>
+                            <p class="card-text mb-auto">
+                                预约时间：{{ reserve.reserve_date }}<br>
+                                失效时间：{{ reserve.expire_date }}<br>
+                                {% if reserve.expire_date < now() %}
+                                <span class="badge badge-danger">已逾期！</span>
+                                {% endif %}
+                            </p>
+                            <div class="d-flex align-items-center">
+                                {% if reserve.expire_date > now() %}
+                                <a class="btn btn-info btn-round btn-sm ml-2" href="{{ url_for('borrow', book_id=reserve.bid) }}">Borrow</a>
+                                {% endif %}
+                                <a class="btn btn-info btn-round btn-sm ml-2" href="{{ url_for('cancel_reserve', book_id=reserve.bid) }}">Cancel</a>
+                            </div>
+                            <a class="text-gray" href="https://book.douban.com/subject_search?search_text={{ reserve.bname }}">在豆瓣中搜索</a>
+                        </div>
+                        <img class="card-img-right flex-auto d-none d-md-block" src="assets/uploads/{{ reserve.bid }}.jpg" onerror="this.onerror=null; this.src='assets/img/demo/blog2.jpg';">
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+<!-- END Reserve -->
+
+<!-- Rate -->
+<section class="pt-5 pb-5" data-aos="fade-down">
+    <div class="container">
+        <h1> 评分表 </h1>
+        <table class="table">
+    <thead class="thead-dark">
+    <tr>
+        <th scope="col"> 书名      </th>
+        <th scope="col"> 评分用户	</th>
+        <th scope="col"> 评分值	</th>
+        <th scope="col"> #	</th>
+    </tr>
+    </thead>
+    {% for rate in rates %}
+    <tbody>
+    <tr>
+        <td> {{ rate.bname }} </td>
+        <td> {{ rate.name }} </td>
+        <td> {{ rate.score }} </td>
+        <td> 
+            <div class="d-flex align-items-center">
+                <a class="btn btn-info btn-round btn-sm" href="{{ url_for('edit_rate', rate_id=rate.id) }}">Edit</a>
+                <form class="inline-form ml-2" method="post" action="{{ url_for('delete_rate', rate_id=rate.id) }}">
+                    <input class="btn btn-info btn-round btn-sm" type="submit" name="delete" value="Delete" onclick="return confirm('Are you sure?')">
+                </form>
+            </div>
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

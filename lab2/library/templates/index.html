@@ -3,74 +3,44 @@
 {% block content %}
 <section class="pt-5 pb-5" data-aos="fade-down">
     <div class="container">
-        
         <!-- Featured -->
-        <div class="row">        
-            <div class="col-lg-6">
-            <div class="card flex-md-row mb-4 box-shadow h-xl-300">
-                <div class="card-body d-flex flex-column align-items-start">
-                    <strong class="d-inline-block mb-2 text-purple">Business</strong>
-                    <h3 class="mb-0">
-                    <a class="text-dark" href="#">Living the Dream on a Sunny Island</a>
-                    </h3>
-                    <div class="mb-1 text-muted">
-                        Nov 12
-                    </div>
-                    <p class="card-text mb-auto">
-                        This is a wider card with supporting text below as a natural lead-in to additional content.
-                    </p>
-                    <a class="text-gray" href="#">Continue reading</a>
-                </div>
-                <img class="card-img-right flex-auto d-none d-md-block" src="assets/img/demo/blog1.jpg">
-            </div>
-            </div>
-            <div class="col-lg-6">
-            <div class="card flex-md-row mb-4 box-shadow h-xl-300">
-                    <div class="card-body d-flex flex-column align-items-start">
-                        <strong class="d-inline-block mb-2 text-success">Marketing</strong>
-                        <h3 class="mb-0">
-                        <a class="text-dark" href="#">Why your marketing can be improved</a>
-                        </h3>
-                        <div class="mb-1 text-muted">
-                            Nov 12
+        <div class="row"> 
+            {% for book in books %}
+            <div class="col-lg-6"> 
+                <div class="card flex-md-row mb-4 box-shadow h-xl-300">
+                        <div class="card-body d-flex flex-column align-items-start">
+                            <strong class="d-inline-block mb-2 text-success">剩余馆藏数：{{ book.total_num - book.borrow_num - book.reserve_num}}</strong>
+                            <h3 class="mb-0">
+                            <a class="text-dark" href="#">{{ book.bname }}</a>
+                            </h3>
+                            <div class="mb-1 text-muted">
+                                {{ book.author }}
+                                <div class="mb-1 text-orange">
+                                    评分：{{ book.rating|round(2) }}
+                                </div>
+                            </div>
+                            <p class="card-text mb-auto">
+                                {{ book.description }}
+                            </p>
+                            <div class="d-flex align-items-center">
+                                {% if current_user.is_authenticated and current_user.is_admin %}
+                                <a class="btn btn-info btn-round btn-sm" href="{{ url_for('edit_book', book_id=book.bid) }}">Edit</a>
+                                <form class="inline-form ml-2" method="post" action="{{ url_for('delete_book', book_id=book.bid) }}">
+                                    <input class="btn btn-info btn-round btn-sm" type="submit" name="delete" value="Delete" onclick="return confirm('Are you sure?')">
+                                </form>
+                                {% endif %}
+                                {% if current_user.is_authenticated %}
+                                <a class="btn btn-info btn-round btn-sm ml-2" href="{{ url_for('borrow', book_id=book.bid) }}">Borrow</a>
+                                <a class="btn btn-info btn-round btn-sm ml-2" href="{{ url_for('reserve', book_id=book.bid) }}">Reserve</a>
+                                <a class="btn btn-info btn-round btn-sm ml-2" href="{{ url_for('rate_sql', book_id=book.bid) }}">Rate</a>
+                                {% endif %}
+                            </div>
+                            <a class="text-gray" href="https://book.douban.com/subject_search?search_text={{ book.bname }}">在豆瓣中搜索</a>
                         </div>
-                        <p class="card-text mb-auto">
-                            This is a wider card with supporting text below as a natural lead-in to additional content.
-                        </p>
-                        <a class="text-gray" href="#">Continue reading</a>
-                    </div>
-                    <img class="card-img-right flex-auto d-none d-md-block" src="assets/img/demo/blog2.jpg">
-                </div>
-            </div>
-        </div>
-        <!-- End Featured -->
-        
-        <!-- Blog Cards -->
-        <div class="row gap-y">
-            {% for movie in movies %}
-            <div class="col-md-6 col-lg-4">
-                <div class="card">
-                    <img class="img-card-top" src="assets/img/demo/blog4.jpg">
-                    <div class="card-body">
-                        <li>{{ movie.title }} - {{ movie.year }}
-                        <span class="float-right">
-                            {% if current_user.is_authenticated %}
-                            <a class="btn" href="{{ url_for('edit', movie_id=movie.id) }}">Edit</a>
-                            <a class="btn" href="{{ url_for('delete', movie_id=movie.id) }}">Delete</a>
-                            <form class="inline-form" method="post" action="{{ url_for('delete', movie_id=movie.id) }}">
-                                <input class="btn" type="submit" name="delete" value="Delete" onclick="return confirm('Are you sure?')">
-                            </form>
-                            {% endif %}
-                            <a class="imdb" href="https://www.imdb.com/find?q={{ movie.title }}" target="_blank" title="Find this movie on IMDb">IMDb</a>
-                        </span>
-                        </li>
-                    </div>
+                        <img class="card-img-right flex-auto d-none d-md-block" src="assets/uploads/{{ book.bid }}.jpg" onerror="this.onerror=null; this.src='assets/img/demo/blog2.jpg';">
                 </div>
             </div>
             {% endfor %}
         </div>
-        <!-- End Blog Cards -->
-        
-    </div>
-    </section>
+        <!-- End Featured -->
 {% endblock %}

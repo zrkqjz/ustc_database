@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-md-flex h-md-100 align-items-center">
+	<div class="col-md-6 p-0 bg-indigo h-md-100">
+		<div class="text-white d-md-flex align-items-center h-100 p-5 text-center justify-content-center">
+			<div class="logoarea pt-5 pb-5">
+				<p>
+					<i class="fa fa-anchor fa-3x"></i>
+				</p>
+				<h1 class="mb-0 mt-3 display-4">查询</h1>
+				</a>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-6 p-0 bg-white h-md-100 loginarea">
+		<div class="d-md-flex align-items-center h-md-100 p-5 justify-content-center">
+			<form method="post" action="{{url_for('search')}}">
+                <input type="text" name="author" id="author" placeholder="请输入作者"> <br><br>
+                <input type="text" name="title" id="title" placeholder="请输入标题"> <br><br>
+                <input type="submit" value="搜索">
+			</form>
+		</div>
+	</div>
+</div>
+
+        <!-- Featured -->
+        <div class="row"> 
+            {% for book in books %}
+            <div class="col-lg-6"> 
+                <div class="card flex-md-row mb-4 box-shadow h-xl-300">
+                        <div class="card-body d-flex flex-column align-items-start">
+                            <strong class="d-inline-block mb-2 text-success">剩余馆藏数：{{ book.total_num - book.borrow_num - book.reserve_num}}</strong>
+                            <h3 class="mb-0">
+                            <a class="text-dark" href="#">{{ book.bname }}</a>
+                            </h3>
+                            <div class="mb-1 text-muted">
+                                {{ book.author }},
+                                {{ book.rating|round(2) }}
+                            </div>
+                            <p class="card-text mb-auto">
+                                {{ book.description }}
+                            </p>
+                            <div class="d-flex align-items-center">
+                                {% if current_user.is_authenticated and current_user.is_admin %}
+                                <a class="btn btn-info btn-round btn-sm" href="{{ url_for('edit_book', book_id=book.bid) }}">Edit</a>
+                                <form class="inline-form ml-2" method="post" action="{{ url_for('delete_book', book_id=book.bid) }}">
+                                    <input class="btn btn-info btn-round btn-sm" type="submit" name="delete" value="Delete" onclick="return confirm('Are you sure?')">
+                                </form>
+                                {% endif %}
+                                {% if current_user.is_authenticated %}
+                                <a class="btn btn-info btn-round btn-sm ml-2" href="{{ url_for('borrow', book_id=book.bid) }}">Borrow</a>
+                                <a class="btn btn-info btn-round btn-sm ml-2" href="{{ url_for('reserve', book_id=book.bid) }}">Reserve</a>
+                                <a class="btn btn-info btn-round btn-sm ml-2" href="{{ url_for('rate', book_id=book.bid) }}">Rate</a>
+                                {% endif %}
+                            </div>
+                            <a class="text-gray" href="https://book.douban.com/subject_search?search_text={{ book.bname }}">在豆瓣中搜索</a>
+                        </div>
+                        <img class="card-img-right flex-auto d-none d-md-block" src="assets/uploads/{{ book.bid }}.jpg" onerror="this.onerror=null; this.src='assets/img/demo/blog2.jpg';">
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <!-- End Featured -->
+{% endblock %}
